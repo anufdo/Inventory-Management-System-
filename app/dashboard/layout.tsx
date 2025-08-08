@@ -1,9 +1,11 @@
+import { LogoutButton } from "@/components/LogoutButton";
+import { authConfig } from "@/lib/auth";
+import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { ReactNode } from "react";
-import { auth, signOut } from "@/lib/auth";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
-  const session = await auth();
+  const session = await getServerSession(authConfig);
   if (!session?.user) {
     return (
       <div className="min-h-screen grid place-items-center">
@@ -13,20 +15,16 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }
   const userName = session.user.name || "User";
 
-  async function handleSignOut() {
-    "use server";
-    await signOut({ redirectTo: "/login" });
-  }
 
   return (
     <div className="min-h-screen grid grid-rows-[auto,1fr,auto] bg-gray-50">
       <header className="sticky top-0 z-10 bg-white border-b">
         <div className="max-w-7xl mx-auto flex items-center justify-between p-4">
           <Link href="/dashboard" className="text-lg font-semibold">Inventory</Link>
-          <form action={handleSignOut}>
+          <div className="flex items-center">
             <span className="mr-3 text-sm text-gray-600">{userName}</span>
-            <button className="px-3 py-1.5 rounded-md border hover:bg-gray-100">Logout</button>
-          </form>
+            <LogoutButton className="px-3 py-1.5 rounded-md border hover:bg-gray-100" />
+          </div>
         </div>
       </header>
       <div className="grid grid-cols-12 gap-0">

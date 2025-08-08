@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { connectToDatabase } from "@/lib/db";
 import { Category } from "@/models/Category";
 import { Product } from "@/models/Product";
