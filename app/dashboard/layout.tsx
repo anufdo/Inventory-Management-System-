@@ -4,7 +4,14 @@ import { auth, signOut } from "@/lib/auth";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await auth();
-  const userName = session?.user?.name || "User";
+  if (!session?.user) {
+    return (
+      <div className="min-h-screen grid place-items-center">
+        <a className="px-4 py-2 rounded-md border" href="/login">Sign in</a>
+      </div>
+    );
+  }
+  const userName = session.user.name || "User";
 
   async function handleSignOut() {
     "use server";

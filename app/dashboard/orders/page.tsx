@@ -5,8 +5,8 @@ import { useState } from "react";
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function OrdersPage() {
-  const { data: products } = useSWR("/api/products", fetcher);
-  const { data: orders, mutate } = useSWR("/api/orders", fetcher);
+  const { data: products } = useSWR<{ items: { _id: string; name: string }[] }>("/api/products", fetcher);
+  const { data: orders, mutate } = useSWR<{ items: { _id: string; createdAt: string; customer?: string; totalAmount: number }[] }>("/api/orders", fetcher);
   const [items, setItems] = useState<{ productId: string; quantity: number }[]>([{ productId: "", quantity: 1 }]);
   const [customer, setCustomer] = useState("");
 
@@ -45,7 +45,7 @@ export default function OrdersPage() {
               <div key={i} className="grid grid-cols-12 gap-2">
                 <select className="col-span-8 border rounded-md px-3 py-2" value={it.productId} onChange={(e) => updateItem(i, "productId", e.target.value)}>
                   <option value="">Select product</option>
-                  {products?.items?.map((p: any) => (
+                  {products?.items?.map((p) => (
                     <option key={p._id} value={p._id}>{p.name}</option>
                   ))}
                 </select>
@@ -67,7 +67,7 @@ export default function OrdersPage() {
             </tr>
           </thead>
           <tbody>
-            {orders?.items?.map((o: any) => (
+            {orders?.items?.map((o) => (
               <tr key={o._id}>
                 <td className="px-4 py-2">{new Date(o.createdAt).toLocaleString()}</td>
                 <td className="px-4 py-2">{o.customer}</td>

@@ -9,8 +9,8 @@ export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const isNew = params.id === "new";
-  const { data: categories } = useSWR("/api/categories", fetcher);
-  const { data } = useSWR(!isNew ? `/api/products/${params.id}` : null, fetcher);
+  const { data: categories } = useSWR<{ items: { _id: string; name: string }[] }>("/api/categories", fetcher);
+  const { data } = useSWR<{ item: { name: string; price: number; stock: number; categoryId: string; description?: string } }>(!isNew ? `/api/products/${params.id}` : null, fetcher);
 
   const [form, setForm] = useState({ name: "", price: 0, stock: 0, categoryId: "", description: "" });
   useEffect(() => {
@@ -46,7 +46,7 @@ export default function ProductDetailPage() {
             <label className="text-sm">Category</label>
             <select className="w-full border rounded-md px-3 py-2" value={form.categoryId} onChange={(e) => setForm({ ...form, categoryId: e.target.value })}>
               <option value="">Select Category</option>
-              {categories?.items?.map((c: any) => (
+              {categories?.items?.map((c) => (
                 <option key={c._id} value={c._id}>{c.name}</option>
               ))}
             </select>

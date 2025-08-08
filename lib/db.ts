@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 declare global {
-  // eslint-disable-next-line no-var
+  // Using var on purpose to persist across hot reloads
   var mongooseConnection: { conn: typeof mongoose | null; promise: Promise<typeof mongoose> | null } | undefined;
 }
 
@@ -21,7 +21,7 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
   }
 
   if (!global.mongooseConnection.promise) {
-    global.mongooseConnection.promise = mongoose.connect(MONGODB_URI, {
+    global.mongooseConnection.promise = mongoose.connect(MONGODB_URI as string, {
       bufferCommands: false,
       dbName: process.env.MONGODB_DB_NAME || undefined,
     });

@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const q = searchParams.get("q") || "";
   const page = Number(searchParams.get("page") || 1);
   const limit = Number(searchParams.get("limit") || 50);
-  const filter: any = q ? { name: { $regex: q, $options: "i" } } : {};
+  const filter: Record<string, unknown> = q ? { name: { $regex: q, $options: "i" } } : {};
   const [items, total] = await Promise.all([
     Product.find(filter).sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit).lean(),
     Product.countDocuments(filter),

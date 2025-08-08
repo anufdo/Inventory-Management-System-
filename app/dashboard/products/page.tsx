@@ -5,7 +5,7 @@ import Link from "next/link";
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function ProductsPage() {
-  const { data, mutate } = useSWR("/api/products", fetcher);
+  const { data, mutate } = useSWR<{ items: { _id: string; name: string; price: number; stock: number }[] }>("/api/products", fetcher);
 
   async function remove(id: string) {
     if (!confirm("Delete product?")) return;
@@ -30,7 +30,7 @@ export default function ProductsPage() {
             </tr>
           </thead>
           <tbody>
-            {data?.items?.map((p: any) => (
+            {data?.items?.map((p) => (
               <tr key={p._id} className={p.stock < 5 ? "bg-red-50" : ""}>
                 <td className="px-4 py-2">{p.name}</td>
                 <td className="px-4 py-2">${p.price.toFixed(2)}</td>

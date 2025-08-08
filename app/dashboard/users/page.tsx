@@ -4,7 +4,7 @@ import useSWR from "swr";
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function UsersPage() {
-  const { data, mutate } = useSWR("/api/users", fetcher);
+  const { data, mutate } = useSWR<{ items: { _id: string; name: string; email: string; role: "ADMIN" | "STAFF" }[] }>("/api/users", fetcher);
   const { data: me } = useSWR("/api/auth/session", fetcher);
 
   async function remove(id: string) {
@@ -31,7 +31,7 @@ export default function UsersPage() {
             </tr>
           </thead>
           <tbody>
-            {data?.items?.map((u: any) => (
+            {data?.items?.map((u) => (
               <tr key={u._id}>
                 <td className="px-4 py-2">{u.name}</td>
                 <td className="px-4 py-2">{u.email}</td>

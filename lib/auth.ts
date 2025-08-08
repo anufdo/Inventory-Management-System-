@@ -1,10 +1,13 @@
-import NextAuth, { type NextAuthConfig } from "next-auth";
+import NextAuth from "next-auth";
+import type { NextAuthOptions } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
 import { connectToDatabase } from "@/lib/db";
 import { User } from "@/models/User";
+import type { JWT } from "next-auth/jwt";
+import type { Session } from "next-auth";
 
-export const authConfig: NextAuthConfig = {
+export const authConfig: NextAuthOptions = {
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
@@ -28,20 +31,20 @@ export const authConfig: NextAuthConfig = {
           name: user.name,
           email: user.email,
           role: user.role,
-        } as any;
+        } satisfies { id: string; name?: string | null; email?: string | null; role?: "ADMIN" | "STAFF" };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = (user as any).role;
+    async jwt({ token, user }: { token: JWT; user?: { role?: "ADMIN" | "STAFF" } | null }) {
+      if (user && "role" in user) {
+        token.role = user.role as "ADMIN" | "STAFF" | undefined;
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
-        (session.user as any).role = token.role;
+        session.user.role = token.role as "ADMIN" | "STAFF" | undefined;
       }
       return session;
     },

@@ -49,7 +49,7 @@ export default function CategoriesPage() {
             </tr>
           </thead>
           <tbody>
-            {data?.items?.map((c: any) => (
+            {data?.items?.map((c: { _id: string; name: string; description?: string }) => (
               <tr key={c._id}>
                 <td className="px-4 py-2">{c.name}</td>
                 <td className="px-4 py-2">{c.description}</td>

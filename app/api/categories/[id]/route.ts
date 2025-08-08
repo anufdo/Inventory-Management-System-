@@ -3,14 +3,16 @@ import { connectToDatabase } from "@/lib/db";
 import { Category } from "@/models/Category";
 import { categorySchema } from "@/lib/validation";
 
-export async function GET(_: Request, { params }: { params: { id: string } }) {
+export async function GET(_: Request, context: unknown) {
+  const { params } = context as { params: { id: string } };
   await connectToDatabase();
   const item = await Category.findById(params.id).lean();
   if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json({ item });
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, context: unknown) {
+  const { params } = context as { params: { id: string } };
   const json = await request.json();
   const parsed = categorySchema.safeParse(json);
   if (!parsed.success) {
@@ -22,7 +24,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   return NextResponse.json({ item: updated });
 }
 
-export async function DELETE(_: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_: Request, context: unknown) {
+  const { params } = context as { params: { id: string } };
   await connectToDatabase();
   const deleted = await Category.findByIdAndDelete(params.id);
   if (!deleted) return NextResponse.json({ error: "Not found" }, { status: 404 });
